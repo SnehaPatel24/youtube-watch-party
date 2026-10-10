@@ -1,0 +1,91 @@
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #10131c;
+  color: #f4f4f5;
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  width: min(900px, 92%);
+  margin: 50px auto;
+}
+
+h1 {
+  color: #7dd3fc;
+}
+
+.panel {
+  margin-top: 24px;
+  padding: 24px;
+  border: 1px solid #343b4d;
+  border-radius: 12px;
+  background: #191e2b;
+}
+
+label {
+  display: block;
+  margin: 16px 0 8px;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #465064;
+  border-radius: 6px;
+  background: #10131c;
+  color: white;
+  font-size: 16px;
+}
+
+button {
+  margin-top: 14px;
+  padding: 11px 16px;
+  border: 0;
+  border-radius: 6px;
+  background: #0284c7;
+  color: white;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #0369a1;
+}
+
+li {
+  margin: 12px 0;
+}
+
+hr {
+  margin: 24px 0;
+  border: 0;
+  border-top: 1px solid #343b4d;
+}
+
+@media (max-width: 600px) {
+  .container {
+    margin: 24px auto;
+  }
+
+  .panel {
+    padding: 16px;
+  }
+}
+
+.video-container {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin-top: 20px;
+  overflow: hidden;
+}
+
+.video-container > div,
+.video-container iframe {
+  width: 100% !important;
+  height: 100% !important;
+}
