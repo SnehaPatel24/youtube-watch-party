@@ -10,6 +10,11 @@ function YouTubePlayer({ room, isHost }) {
 
   const videoId = room.videoId;
 
+  useEffect(() => {
+  playerRef.current = null;
+  setDuration(0);
+}, [videoId]);
+
   const playerOptions = {
     width: "100%",
     playerVars: {
@@ -20,20 +25,24 @@ function YouTubePlayer({ room, isHost }) {
     }
   };
 
-  function onReady(event) {
-    playerRef.current = event.target;
-    setDuration(event.target.getDuration() || 0);
+  
+function onReady(event) {
+  playerRef.current = event.target;
+  setDuration(event.target.getDuration() || 0);
+
+  if (room.currentTime > 0) {
+    event.target.seekTo(room.currentTime, true);
   }
 
-  useEffect(() => {
-    const player = playerRef.current;
+  if (room.playState === "playing") {
+    event.target.playVideo();
+  } else {
+    event.target.pauseVideo();
+  }
+}
 
-    if (!player || !videoId) return;
 
-    if (player.getVideoData().video_id !== videoId) {
-      player.cueVideoById(videoId);
-    }
-  }, [videoId]);
+ 
 
   useEffect(() => {
   if (!isHost || !videoId || room.playState !== "playing") {
@@ -59,29 +68,49 @@ function YouTubePlayer({ room, isHost }) {
   return () => clearInterval(intervalId);
 }, [isHost, videoId, room.playState]);
 
-  useEffect(() => {
-    const player = playerRef.current;
+  
+useEffect(() => {
+  const player = playerRef.current;
 
-    if (!player || !videoId) return;
+  if (!player || !videoId) return;
+
+  try {
+    const iframe = player.getIframe();
+
+    if (!iframe || !iframe.isConnected) return;
 
     if (room.playState === "playing") {
       player.playVideo();
     } else {
       player.pauseVideo();
     }
-  }, [room.playState, videoId]);
+  } catch (error) {
+    console.warn("Player is not ready yet:", error);
+  }
+}, [room.playState, videoId]);
 
-  useEffect(() => {
-    const player = playerRef.current;
 
-    if (!player || !videoId) return;
+  
+useEffect(() => {
+  const player = playerRef.current;
+
+  if (!player || !videoId) return;
+
+  try {
+    const iframe = player.getIframe();
+
+    if (!iframe || !iframe.isConnected) return;
 
     const actualTime = player.getCurrentTime();
 
     if (Math.abs(actualTime - room.currentTime) > 2) {
       player.seekTo(room.currentTime, true);
     }
-  }, [room.currentTime, videoId]);
+  } catch (error) {
+    console.warn("Seeking skipped; player is not ready:", error);
+  }
+}, [room.currentTime, videoId]);
+
 
   function changeVideo() {
     if (!isHost) return;
@@ -141,11 +170,17 @@ function YouTubePlayer({ room, isHost }) {
       {videoId ? (
         <>
           <div className="video-container">
-            <YouTube
-              videoId={videoId}
-              opts={playerOptions}
-              onReady={onReady}
-            />
+            
+<YouTube
+  key={videoId}
+  videoId={videoId}
+  opts={playerOptions}
+  onReady={onReady}
+  onError={(event) => {
+    console.error("YouTube player error:", event.data);
+  }}
+/>
+
           </div>
 
           {isHost ? (

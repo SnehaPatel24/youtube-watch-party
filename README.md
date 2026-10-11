@@ -91,9 +91,9 @@ Open the local URL displayed by Vite in your browser.
 
 ## Links
 
-- **GitHub Repository:** YOUR_GITHUB_REPOSITORY_URL
-- **Live Application:** Add your deployed frontend URL here.
-- **Backend Service:** Add your deployed backend URL here.
+- GitHub Repository: https://github.com/SnehaPatel24/youtube-watch-party
+- Frontend: https://youtube-watch-party-client.vercel.app
+- Backend: https://youtube-watch-party-server-5cpt.onrender.com
 
 ## Future Improvements
 

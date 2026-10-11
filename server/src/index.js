@@ -424,57 +424,60 @@ socket.on("playback_action", ({ action, currentTime } = {}) => {
   io.to(roomId).emit("sync_state", getPublicRoom(room));
 });
 
-socket.on("seek_to", ({ seconds } = {}) => {
-  const roomId = socket.data.roomId;
-  const room = rooms.get(roomId);
 
-  if (!room || !canControlRoom(socket, room)) {
-    socket.emit("action_rejected", {
-      message: "You do not have permission to seek."
-    });
-    return;
-  }
+  socket.on("seek_to", ({ seconds } = {}) => {
+    const roomId = socket.data.roomId;
+    const room = rooms.get(roomId);
 
-  if (
-    !room.videoId ||
-    typeof seconds !== "number" ||
-    !Number.isFinite(seconds) ||
-    seconds < 0
-  ) {
-    socket.emit("action_rejected", {
-      message: "Enter a valid playback position."
-    });
-    return;
-  }
+    if (!room || !canControlRoom(socket, room)) {
+      socket.emit("action_rejected", {
+        message: "You do not have permission to seek."
+      });
+      return;
+    }
+
+    if (
+      !room.videoId ||
+      typeof seconds !== "number" ||
+      !Number.isFinite(seconds) ||
+      seconds < 0
+    ) {
+      socket.emit("action_rejected", {
+        message: "Enter a valid playback position."
+      });
+      return;
+    }
+
+    room.currentTime = seconds;
+
+    io.to(roomId).emit("sync_state", getPublicRoom(room));
+  });
 
   socket.on("playback_sync", ({ currentTime } = {}) => {
-  const roomId = socket.data.roomId;
-  const room = rooms.get(roomId);
+    const roomId = socket.data.roomId;
+    const room = rooms.get(roomId);
 
-  if (!room || !canControlRoom(socket, room)) {
-    return;
-  }
+    if (!room || !canControlRoom(socket, room)) {
+      return;
+    }
 
-  if (
-    typeof currentTime !== "number" ||
-    !Number.isFinite(currentTime) ||
-    currentTime < 0
-  ) {
-    return;
-  }
+    if (
+      typeof currentTime !== "number" ||
+      !Number.isFinite(currentTime) ||
+      currentTime < 0
+    ) {
+      return;
+    }
 
-  room.currentTime = currentTime;
+    room.currentTime = currentTime;
 
-  io.to(roomId).emit("playback_tick", {
-    roomId,
-    currentTime
+    io.to(roomId).emit("playback_tick", {
+      roomId,
+      currentTime
+    });
   });
-});
 
-  room.currentTime = seconds;
 
-  io.to(roomId).emit("sync_state", getPublicRoom(room));
-});
     socket.on("assign_role", ({ targetUserId, role } = {}) => {
       const roomId = socket.data.roomId;
       const room = rooms.get(roomId);
